@@ -7,10 +7,17 @@ IP=127.0.0.1 # 数据库IP地址
 PORT=3306 # 数据库端口号
 DB_NAME=sbtest # 数据库名称
 TABLE_NUMS=10 # 表数量
-TABLE_SIZE=100000 # 表大小
+TABLE_SIZE=10000000 # 表大小
+SOCKET="/data/mysql/mysql.sock" # 数据库socket路径
+
+if [ -z "$1" ]; then
+    echo "用法: $0 <测试模式，如oltp_read_write或oltp_read_only>"
+    exit 1
+fi
+TEST_MODE="$1"
 
 # 2. 清理测试数据
-sysbench oltp_read_write --db-driver=mysql --mysql-user=$USERNAME \
+sysbench $TEST_MODE --db-driver=mysql --mysql-user=$USERNAME \
     --mysql-password=$PASSWORD --mysql-host=$IP --mysql-port=$PORT \
-    --mysql-db=$DB_NAME --tables=$TABLE_NUMS \
+    --mysql-db=$DB_NAME --mysql-socket=$SOCKET --tables=$TABLE_NUMS \
     --table-size=$TABLE_SIZE cleanup
